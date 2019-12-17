@@ -15,12 +15,13 @@ function Enemy(position, radius, color, speed = 1, acc = 1) {
     this.color = color;
 }
 
-function Bullet (position, radius, color, speed = 1) {
+function Bullet (position, radius, color, speed = 1, isPlayersBullet = false) {
     this.x = position.x;
     this.y = position.y;
     this.radius = radius;
     this.color = color;
     this.speed = speed;
+    this.isPlayersBullet = isPlayersBullet;
 }
 
 function Data(options) {
@@ -43,6 +44,10 @@ function Data(options) {
         height: height,
     };
 
+    var counter = 1;
+    var PERIOD_OF_ENEMY_SHOT = 60;
+
+    var isGameFinished = false;
 
     var player = new Player(
         {
@@ -61,8 +66,13 @@ function Data(options) {
         return new Enemy(coords, enemyRadius, 'red');
     }
 
-    function createBullet(player) {
-        return new Bullet({ x: player.x, y: player.y }, playerRadius / 3, '#00dcff');
+    function createBullet(player, isPlayer = false) {
+        return new Bullet({ x: player.x, y: player.y },
+            playerRadius / 3,
+            '#00dcff',
+            1,
+            isPlayer
+        );
     }
 
     function renderPlayer(cb) {
@@ -105,33 +115,74 @@ function Data(options) {
     };
 
     this.setEnemiesCoordinates = function () {
+        var enemy;
         for (var i = 0; i < enemies.length; i++) {
-            enemies[i].y++;
+            enemy = enemies[i];
+            enemy.y++;
+            if (!player ||
+                enemy.y + enemy.radius === player.y - player.radius
+            ) {
+                isGameFinished = true;
+            }
         }
     };
 
     this.playerShot = function () {
-        bullets.push(createBullet(player));
+        bullets.push(createBullet(player, true));
+    };
+
+    function countEnemiesThatShot(count) {
+        var enemiesThatShot = [];
+        for (var i = 0; i < count; i++) {
+            enemiesThatShot.push(enemies[i]);
+        }
+        return enemiesThatShot;
+    }
+
+    this.enemyShot = function () {
+        if (counter % PERIOD_OF_ENEMY_SHOT === 0) {
+            var howManyEnemiesShot = Math.floor(Math.random() * (enemies.length) + 1);
+            var enemiesThatShot = countEnemiesThatShot(howManyEnemiesShot);
+            var enemy;
+            for (var i = 0; i < enemiesThatShot.length; i++) {
+                enemy = enemiesThatShot[i];
+                bullets.push(createBullet(enemy));
+            }
+            counter = 1;
+        } else {
+            counter++;
+        }
     };
 
     function aim(bullet) {
-        var initalEnemiesCount = enemies.length;
+        var initialEnemiesCount = enemies.length;
         enemies = enemies.filter(function (enemy) {
             var radiusDistance = enemy.radius + bullet.radius;
-            var centerDistance =Math.pow(Math.pow(bullet.x - enemy.x, 2) + Math.pow(bullet.y - enemy.y, 2) , 0.5);
-            if (centerDistance > radiusDistance){
+            var centerDistance = Math.pow(
+                Math.pow(bullet.x - enemy.x, 2) +
+                Math.pow(bullet.y - enemy.y, 2)
+                , 0.5);
+            if (centerDistance > radiusDistance) {
                 return enemy;
             }
             return false;
         });
-        return initalEnemiesCount !== enemies.length;
+        return initialEnemiesCount !== enemies.length;
     }
 
     this.setBulletsCoordinates = function () {
         bullets = bullets.filter(function (bullet) {
-            bullet.y--;
-            return !aim(bullet) ? bullet : false;
+            if (bullet.isPlayersBullet) {
+                bullet.y--;
+                return !aim(bullet) ? bullet : false;
+            }
+            bullet.y += 2;
+            return bullet;
         });
+    };
+
+    this.isGameFinished = function () {
+        return !player || isGameFinished;
     };
 
     function initEnemies() {

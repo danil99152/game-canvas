@@ -24,10 +24,18 @@ function GraphManager(options) {
         });
         data.setEnemiesCoordinates();
         data.setBulletsCoordinates();
+        data.enemyShot();
+        var isGameFinished = data.isGameFinished();
+        if (isGameFinished) {
+            clearInterval(INTERVAL_ID);
+            console.log('GAMEOVER');
+        }
     }
 
+    var INTERVAL_ID;
+
     function init() {
-        setInterval(function () {
+        INTERVAL_ID = setInterval(function () {
             render();
         }, 17);
     }
