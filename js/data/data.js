@@ -114,10 +114,24 @@ function Data(options) {
         bullets.push(createBullet(player));
     };
 
+    function aim(bullet) {
+        var initalEnemiesCount = enemies.length;
+        enemies = enemies.filter(function (enemy) {
+            var radiusDistance = enemy.radius + bullet.radius;
+            var centerDistance =Math.pow(Math.pow(bullet.x - enemy.x, 2) + Math.pow(bullet.y - enemy.y, 2) , 0.5);
+            if (centerDistance > radiusDistance){
+                return enemy;
+            }
+            return false;
+        });
+        return initalEnemiesCount !== enemies.length;
+    }
+
     this.setBulletsCoordinates = function () {
-        for(var i = 0; i < bullets.length; i++) {
-            bullets[i].y--;
-        }
+        bullets = bullets.filter(function (bullet) {
+            bullet.y--;
+            return !aim(bullet) ? bullet : false;
+        });
     };
 
     function initEnemies() {
