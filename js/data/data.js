@@ -127,7 +127,7 @@ function Data(options) {
     }
 
     function init() {
-        initEnemies();
+        setInterval(() => initEnemies(), 1000);
     }
     init();
 
