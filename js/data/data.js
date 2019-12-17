@@ -39,6 +39,8 @@ function Data(options) {
 
     var bullets = [];
 
+    var shotEnemiesCount = 0;
+
     var field = {
         width: width,
         height: height,
@@ -57,6 +59,21 @@ function Data(options) {
         playerRadius,
         'black'
     );
+
+    //Канвас-счетчик
+    var canvasContainer = document.getElementById('canvas-container');
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+
+    function kills(shotEnemiesCount){
+        context.beginPath();
+        context.font = "italic 20pt Arial";
+        context.fillStyle = "black";
+        context.fillText("Points: ", 10, 30);
+        context.fillText(shotEnemiesCount, 100, 30);
+        context.closePath();
+        canvasContainer.appendChild(canvas);
+    }
 
     function createEnemy() {
         var coords = {
@@ -165,6 +182,8 @@ function Data(options) {
             if (centerDistance > radiusDistance) {
                 return enemy;
             }
+            shotEnemiesCount++;
+            kills(shotEnemiesCount);
             return false;
         });
         return initialEnemiesCount !== enemies.length;
@@ -192,8 +211,9 @@ function Data(options) {
     }
 
     function init() {
+        kills(shotEnemiesCount);
         setInterval(() => initEnemies(), 1000);
     }
+    
     init();
-
 }
