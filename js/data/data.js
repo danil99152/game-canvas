@@ -42,6 +42,7 @@ function Data(options) {
     var bullets = [];
 
     var shotEnemiesCount = 0;
+    var hp = 10;
 
     var field = {
         width: width,
@@ -64,6 +65,10 @@ function Data(options) {
 
     this.shotEnemiesCount = function () {
         return shotEnemiesCount;
+    };
+
+    this.hp = function () {
+        return hp;
     };
 
     function createEnemy() {
@@ -113,10 +118,12 @@ function Data(options) {
         if (player) {
             switch (direction) {
                 case 'left':
-                    player.x-=10;
+                    if (player.x !== 10)
+                        player.x-=10;
                     break;
                 case 'right':
-                    player.x+=10;
+                    if (player.x !== 590)
+                        player.x+=10;
                     break;
             }
         }
@@ -127,11 +134,6 @@ function Data(options) {
         for (var i = 0; i < enemies.length; i++) {
             enemy = enemies[i];
             enemy.y++;
-            if (!player ||
-                enemy.y + enemy.radius === player.y - player.radius
-            ) {
-                isGameFinished = true;
-            }
         }
     };
 
@@ -156,6 +158,18 @@ function Data(options) {
                 enemy = enemiesThatShot[i];
                 bullets.push(createBullet(enemy));
             }
+            bullets.forEach(function (bullet){
+                var radiusDistance = player.radius + bullet.radius;
+                var centerDistance = Math.pow(
+                    Math.pow(bullet.x - player.x, 2) +
+                    Math.pow(bullet.y - player.y, 2)
+                    , 0.5);
+                if (centerDistance < radiusDistance) {
+                    hp--;
+                    if (hp === 0)
+                        isGameFinished = true;
+                }
+            });
             counter = 1;
         } else {
             counter++;

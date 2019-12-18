@@ -22,7 +22,8 @@ function GraphManager(options) {
         data.render(function (position, radius, color) {
             graph.circle(position, radius, color);
         });
-        graph.kills(data.shotEnemiesCount())
+        graph.kills(data.shotEnemiesCount());
+        graph.life(data.hp());
         data.setEnemiesCoordinates();
         data.setBulletsCoordinates();
         data.enemyShot();

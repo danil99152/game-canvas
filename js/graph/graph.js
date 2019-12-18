@@ -41,6 +41,13 @@ function Graph(options) {
         context.stroke();
     };
 
+    this.life = function (hp) {
+        context.font = "italic 20pt Arial";
+        context.fillStyle = "black";
+        context.fillText("HP: ", 10, 60);
+        context.fillText(hp, 70, 60);
+    };
+
     this.end = function () {
         context.font = "italic 20pt Arial";
         context.fillStyle = "black";
