@@ -22,13 +22,14 @@ function GraphManager(options) {
         data.render(function (position, radius, color) {
             graph.circle(position, radius, color);
         });
+        graph.kills(data.shotEnemiesCount())
         data.setEnemiesCoordinates();
         data.setBulletsCoordinates();
         data.enemyShot();
         var isGameFinished = data.isGameFinished();
         if (isGameFinished) {
             clearInterval(INTERVAL_ID);
-            console.log('GAMEOVER');
+            graph.end();
         }
     }
 

@@ -14,6 +14,8 @@ function Graph(options) {
     var width = options.width || 600;
     var height = options.height || 600;
     var context = null;
+    var canvasContainer = document.getElementById('canvas-container');
+    var canvas = document.createElement('canvas');
 
     this.fillRect = function (color = '#cacaca') {
         context.fillStyle = color;
@@ -39,10 +41,20 @@ function Graph(options) {
         context.stroke();
     };
 
-    function init() {
-        var canvasContainer = document.getElementById('canvas-container');
-        var canvas = document.createElement('canvas');
+    this.end = function () {
+        context.font = "italic 20pt Arial";
+        context.fillStyle = "black";
+        context.fillText("GAMEOVER!", width/2 - 80, height/2);
+    };
 
+    this.kills = function (shotEnemiesCount) {
+        context.font = "italic 20pt Arial";
+        context.fillStyle = "black";
+        context.fillText("Kills: ", 10, 30);
+        context.fillText(shotEnemiesCount, 70, 30);
+    };
+
+    function init() {
         context = canvas.getContext('2d');
         canvas.width = width;
         canvas.height = height;
