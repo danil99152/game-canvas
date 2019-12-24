@@ -18,7 +18,7 @@ function GraphManager(options) {
     });
 
     function render() {
-        graph.fillRect();
+        graph.fillRect('#cacaca');
         data.render(function (position, radius, color) {
             graph.circle(position, radius, color);
         });
@@ -30,7 +30,8 @@ function GraphManager(options) {
         var isGameFinished = data.isGameFinished();
         if (isGameFinished) {
             clearInterval(INTERVAL_ID);
-            graph.end();
+            graph.fillRect('black');
+            graph.end(data.shotEnemiesCount());
         }
     }
 

@@ -217,6 +217,6 @@ function Data(options) {
     function init() {
         setInterval(() => initEnemies(), 1000);
     }
-    
+
     init();
 }
