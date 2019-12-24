@@ -122,7 +122,7 @@ function Data(options) {
                         player.x-=10;
                     break;
                 case 'right':
-                    if (player.x !== 590)
+                    if (player.x !== width-10)
                         player.x+=10;
                     break;
             }
